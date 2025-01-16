@@ -24,7 +24,7 @@ informative:
 
 --- abstract
 
-MoqTransfork is designed to serve live tracks to an unbounded number of viewers with different latency and quality targets: the entire spectrum between real-time and VOD.
+MoqTransfork is designed to serve live tracks over a CDN to viewers with varying latency and quality targets: the entire spectrum between real-time and VOD.
 MoqTransfork itself is a media agnostic transport, allowing relays and CDNs to forward the most important content under degraded networks without knowledge of codecs, containers, or even if the content is fully encrypted.
 Higher level protocols specify how to use MoqTransfork to encode and deliver video, audio, messages, or any form of live content.
 
@@ -61,12 +61,12 @@ The appendix contains a list of high level differences between MoqTransport and 
 MoqTransfork consists of:
 
 - **Session**: An established connection between a client and server used to transmit any number of Tracks by path.
-- **Track**: An append-only series of Groups, each of which can be delivered and decoded independently.
-- **Group**: An append-only series of Frames, each of which are delivered and decoded in order
-- **Frame**: A sized payload of bytes, intended to represent a single moment in time.
+- **Track**: An series of Groups, each of which is delivered and decoded *independently*.
+- **Group**: An series of Frames, each of which is delivered and decoded *in orde.
+- **Frame**: A sized payload of bytes representing a single moment in time.
 
 The application determines how to split data into tracks, groups, and frames.
-MoqTransfork only is responsible for the networking and deduplication by utilizing rules encoded in headers.
+MoqTransfork is responsible for the caching and delivery by utilizing rules encoded in headers.
 This provides robust and generic one-to-many transmission, even for latency sensitive applications.
 
 ## Session
@@ -121,7 +121,7 @@ A media protocol can only be considered "live" if it can handle degraded network
 MoqTransfork handles this by prioritizing the most important media while the remainder is starved.
 
 The importance of each track/group/frame is signaled by the subscriber and the publisher will attempt to obey it.
-This is done via the Track Priority and the Group Order.
+Subscribers signal importance using Track Priority and Group Order.
 Any data that is excessively starved may be dropped (by either endpoint) rather than block the live stream.
 
 A publisher that serves multiple sessions, commonly a relay, should prioritize on a per-session basis.
@@ -289,7 +289,7 @@ A future version of this draft may utilize reliable reset instead.
 This section covers the encoding of each message.
 
 ## STREAM_TYPE
-All streams start with a short header indiciating the stream type.
+All streams start with a short header indicating the stream type.
 
 ~~~
 STREAM_TYPE {
@@ -345,7 +345,7 @@ A value of 0 indicates that this information is not available.
 
 
 ## ANNOUNCE_PLEASE
-A subscriber sends an ANNOUNCE_PLEASE message to indicate it wants any cooresponding ANNOUNCE messages.
+A subscriber sends an ANNOUNCE_PLEASE message to indicate it wants any corresponding ANNOUNCE messages.
 
 ~~~
 ANNOUNCE_PLEASE Message {
@@ -365,7 +365,7 @@ Otherwise, the publisher SHOULD respond with an ANNOUNCE message for any matchin
 
 ## ANNOUNCE
 A publisher sends an ANNOUNCE message to advertise a track.
-Only the suffix is encoded on the wire, the full path is constructed by prepending the prefix from the cooresponding ANNOUNCE_INTEREST.
+Only the suffix is encoded on the wire, the full path is constructed by prepending the prefix from the corresponding ANNOUNCE_INTEREST.
 
 ~~~
 ANNOUNCE Message {
@@ -640,45 +640,26 @@ Datagram and native QUIC support may be re-added in a future draft.
 Based on moq-transport-03.
 The significant changes have been broken into sections.
 
-### Bikeshedding
-- Renamed Track Namespace to Broadcast
-- Renamed Object to Frame
-
-### Stream per Group
-The MoQ WG couldn't agree on how to utilize QUIC streams, so the compromise was to support multiple modes and let the application choose.
-This is a headache for too many reasons to list.
-MoqTransfork only "supports" a stream per group.
-
-### Subscriber's Choice
-MoqTransfork moves most decision making to the subscriber, so a single publisher can support multiple diverse subscribers.
-The publisher provides a default value to resolve conflicts when deduplicating.
-
-### Control Streams
-Transactions like Announce and Subscribe use their own control stream, inheriting the stream state machine for error handling.
-
-This replaces excessive message types in MoqTransport:
-- Removed ANNOUNCE_ERROR
-- Removed ANNOUNCE_DONE
-- Removed UNANNOUNCE
-- Removed SUBSCRIBE_OK
-- Removed SUBSCRIBE_ERROR
-- Removed SUBSCRIBE_DONE
-- Removed UNSUBSCRIBE
-
-### Unambiguous Delivery
-With MoqTransfork, the subscriber knows if a group/frame will be delivered or was dropped.
-
-- Group Sequences are sequential
-- All sequences within the SUBSCRIBE range are delivered or dropped.
-- SUBSCRIBE_GAP when a group is dropped.
-
-### Fetch via Offset
-A reconnecting subscriber can request the retransmission of a group/stream at a given byte offset.
-Resumption in MoqTransport is more complicated and can only occur at object/group boundaries.
-
-### Track INFO
-Added a mechanism to request information about the current track state.
-
+- Bikeshedding
+  - Renamed Track Namespace to Broadcast
+  - Renamed Object to Frame
+- Each unidirectional stream contains a single group.
+  - Removed stream per track.
+  - Removed stream per object.
+- Subscriber chooses track priority and group order.
+- Bidirectional control stream per ANNOUNCE/SUBSCRIBE/FETCH/INFO.
+  - Removed ANNOUNCE_ERROR
+  - Removed ANNOUNCE_DONE
+  - Removed UNANNOUNCE
+  - Removed SUBSCRIBE_OK
+  - Removed SUBSCRIBE_ERROR
+  - Removed SUBSCRIBE_DONE
+  - Removed UNSUBSCRIBE
+- Groups IDs are sequential.
+- All sequences are explicitly delivered.
+  - (unreliable) GROUP for each sequence.
+  - Or (reliable) SUBSCRIBE_GAP when a stream is reset.
+- Fetch Group via offset
 - Added INFO_PLEASE and INFO
 - Replaced SUBSCRIBE_OK with INFO
 

@@ -21,8 +21,8 @@ informative:
 
 --- abstract
 
-MoQ is designed to serve live tracks to an unbounded number of viewers with different latency and quality targets: the entire spectrum between real-time and VOD.
-However, it's difficult to understand how to use the transport given the layering and complexitity of live media delivery.
+MoQ is designed to serve live tracks over a CDN to viewers with varying latency and quality targets: the entire spectrum between real-time and VOD.
+However, it's difficult to understand how to use the transport given the layering and complexity of live media delivery.
 This document outlines how an application could use MoQ to deliver video, audio, and metadata in a variety of scenarios.
 
 --- middle
@@ -30,6 +30,17 @@ This document outlines how an application could use MoQ to deliver video, audio,
 # Conventions and Definitions
 {::boilerplate bcp14-tagged}
 
+
+# Introduction
+Media over QUIC is still in the concept phase; a loose collection of ideas and drafts on how to utilize QUIC for live media delivery.
+It's difficult to grasp how to utilize the various layers:
+
+- QUIC: A transport layer that provides reliable, ordered, and secure streams.
+- MoqTransfork: A pub/sub layer that provides caching and fanout.
+- MoqKarp: A proposed media layer on top of MoqTransfork that deals with encoding and containers.
+- Application: Your application that utilizes any of the above layers.
+
+This document briefly overviews how live media works and how you could use MoQ to deliver it.
 
 # Video
 Video encoding involves complex dependencies between frames/slices.
@@ -94,7 +105,7 @@ While not explicitly stated, I believe the complexity in MoqTransport stems almo
 
 In theory, transmitting enhancement layers as tracks like mentioned above could introduce head-of-line blocking depending on the encoding.
 This would occur when enhancement layers are not self-referential, a rare configuration which also hurts the compression ratio.
-And in practice, there's no discernable user impact given the disproportionate size difference between base and enhancement layers.
+And in practice, there's no discernible user impact given the disproportionate size difference between base and enhancement layers.
 
 The ability to drop individual non-reference frames in the middle of a group is an explicit non-goal for MoqTransfork.
 
