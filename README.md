@@ -2,7 +2,7 @@
 
 This is the working area for the individual Internet-Draft, "Media over QUIC - Transfork".
 
-* [Editor's Copy](https://kixelated.github.io/moq-transfork/#go.draft-lcurley-moq-transfork.html)
+* [Editor's Copy](https://kixelated.github.io/moq-drafts/#go.draft-lcurley-moq-transfork.html)
 * [Datatracker Page](https://datatracker.ietf.org/doc/draft-lcurley-moq-transfork)
 * [Individual Draft](https://datatracker.ietf.org/doc/html/draft-lcurley-moq-transfork)
 * [Compare Editor's Copy to Individual Draft](https://kixelated.github.io/moq-transfork/#go.draft-lcurley-moq-transfork.diff)
