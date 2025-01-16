@@ -1,5 +1,5 @@
 ---
-title: "Media over QUIC - Transfork"
+title: "Media over QUIC - Use Cases"
 abbrev: "moqtf"
 category: info
 
@@ -21,9 +21,9 @@ informative:
 
 --- abstract
 
-MoqTransfork is designed to serve live tracks to an unbounded number of viewers with different latency and quality targets: the entire spectrum between real-time and VOD.
-However, it's difficult to understand how to use MoqTransfork given the layering and complexitity of live media delivery.
-This document outlines how an application could use MoqTransfork to deliver video, audio, and metadata in a variety of scenarios.
+MoQ is designed to serve live tracks to an unbounded number of viewers with different latency and quality targets: the entire spectrum between real-time and VOD.
+However, it's difficult to understand how to use the transport given the layering and complexitity of live media delivery.
+This document outlines how an application could use MoQ to deliver video, audio, and metadata in a variety of scenarios.
 
 --- middle
 
