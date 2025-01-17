@@ -265,18 +265,21 @@ Table of Contents
    and FEC is left to the application.
 
    In MoqTransfork, each FEC packet is transmitted as a separate GROUP
-   with a single FRAME.  Lost packets will be retransmitted unless a
-   real-time subscirber updates the subscription to skip them.  For
-   example, if group 3 and group 5 are used to reconstruct group 4, then
-   the subscriber can update the subscription to start at group 5,
-   causing group 4 to be skipped.
+   with a single FRAME.  This means using QUIC streams instead of QUIC
+   datagrams to automatically adjust to the viewer's RTT, automatically
+   retransmitting in scenarios where RTT is small.  Lost packets will be
+   retransmitted unless a real-time subscriber updates the subscription
+   to skip them.  For example, if group 3 and group 5 are used to
+   reconstruct group 4, then the subscriber can update the subscription
+   to start at group 5, causing group 4 to be skipped.
 
-   This round trip of feedback is not ideal but keep in mind that Group
-   Order = DESC will be respected, meaning group 4 won't be
-   (re)transmitted if there's more important data to send.  The usage of
-   QUIC streams instead of QUIC datagrams automatically adjusts to the
-   viewer's RTT, automatically retransmitting in scenarios where RTT is
-   small.
+   This round trip of feedback to avoid retransmissions is not ideal but
+   keep in mind that Group Order = DESC will be respected, meaning group
+   4 won't be (re)transmitted if there's more important data to send.
+   This can result in wasted bandwidth versus something like a timeout
+   on the sender, but it does not impact the user experience nor are
+   these unnecessarily retransmittted audio FEC packets large enough to
+   matter.
 
 5.  Metadata
 
