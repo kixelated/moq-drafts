@@ -135,13 +135,12 @@ In an ideal world, FEC would be performed by QUIC based on the properties of the
 However this is not currently not supported and FEC is left to the application.
 
 In MoqTransfork, each FEC packet is transmitted as a separate GROUP with a single FRAME.
-A real-time subscriber issues a `SUBSCRIBE` with an aggressive `Group Expires` value in the milliseconds range.
-The publisher will drop any Groups that have not been transmitted or acknowledged within this time frame, potentially causing them to be lost.
+This means using QUIC streams instead of QUIC datagrams to automatically adjust to the viewer's RTT, automatically retransmitting in scenarios where RTT is small.
+Lost packets will be retransmitted unless a real-time subscriber updates the subscription to skip them.
+For example, if group 3 and group 5 are used to reconstruct group 4, then the subscriber can update the subscription to start at group 5, causing group 4 to be skipped.
 
-Normally, FEC is performed by transmitting individual packets once as datagrams.
-However, QUIC streams are useful as they allow retransmissions when `Group Expires` is smaller than the RTT.
-If the RTT is too high, then the RESET_STREAM frame adds some overhead but it's inconsequential (~10 more bytes).
-This enables retransmitting lost packets on short hops and otherwise relying on FEC for long hops.
+This round trip of feedback to avoid retransmissions is not ideal but keep in mind that Group Order = DESC will be respected, meaning group 4 won't be (re)transmitted if there's more important data to send.
+This can result in wasted bandwidth versus something like a timeout on the sender, but it does not impact the user experience nor are these unnecessarily retransmittted audio FEC packets large enough to matter.
 
 
 # Metadata
@@ -201,8 +200,8 @@ A subscriber or publisher can reset groups to avoid wasting bandwidth on old dat
 A real-time viewer could issue:
 
 ~~~
-SUBSCRIBE track=audio priority=1 order=DESC group_expires=100ms
-SUBSCRIBE track=video priority=0 order=DESC group_expires=100ms
+SUBSCRIBE track=audio priority=1 order=DESC
+SUBSCRIBE track=video priority=0 order=DESC
 ~~~
 
 In this example, audio is higher priority than video, and newer groups are higher priority than older groups.
@@ -223,10 +222,6 @@ The user experience depends on the amount of congestion:
 - If there's moderate congestion, the tail of the old video group is dropped.
 - If there's severe congestion, all video will be late/dropped and some audio groups/frames will be dropped.
 
-The value of `group_expires` is optional.
-In this example it means that the publisher automatically resets each group 100ms after they are no longer the latest.
-It's recommended to use the maximum jitter buffer size.
-
 ## Unreliable Live
 Unreliable live is a term I made up.
 Basically we want low latency, but we don't need it at all costs and we're willing to skip some video to achieve it.
@@ -236,16 +231,16 @@ An unreliable live viewer could issue:
 
 ~~~
 SUBSCRIBE track=audio priority=1 order=ASC
-SUBSCRIBE track=video priority=0 order=DESC group_expires=3s
+SUBSCRIBE track=video priority=0 order=DESC
 ~~~
 
-This example is different from the real-time one in that audio is fully reliable and delivered in order.
+This example is different from the real-time one in that audio is reliable and delivered in order.
 Of course this is optional and up to the application, as it will result in buffering during significant congestion.
 If the viewer goes through a tunnel and then comes back online, they won't miss any audio.
 
-A key difference is that our jitter buffer is much larger for video, 3s in this example.
-The player will tolerate up to 3s of latency before it starts skipping past video frames.
-Note that the `group_expires` value can be increased during buffering by issuing a SUBSCRIBE_UPDATE.
+Video will be delivered out of order but the player can maintain a jitter buffer.
+For example, it could hold onto up to 3s of video frames in memory so it can tolerate an equal amount of congestion.
+If the buffer fills up, the player can STOP_SENDING any old groups and/or update the subscription to skip them.
 
 ## Reliable Live
 Reliable live is another term I made up.

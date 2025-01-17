@@ -399,7 +399,6 @@ SUBSCRIBE Message {
   [ Track Path Part (b) ]
   Track Priority (i)
   Group Order (i)
-  Group Expires (i)
   Group Min (i)
   Group Max (i)
 }
@@ -425,11 +424,6 @@ The publisher SHOULD transmit *higher* values first during congestion.
 The transmission order of the Groups within the subscription.
 The publisher SHOULD transmit groups based on their sequence number in default (0), ascending (1), or descending (2) order.
 
-**Group Expires**:
-A duration in milliseconds that applies to all Groups within the subscription.
-The group SHOULD be dropped if this duration has elapsed after group has finished, including any time spent cached.
-The publisher's Group Expires value (via INFO) SHOULD be used instead when smaller.
-
 **Group Min**:
 The minimum group sequence number plus 1.
 A value of 0 indicates the latest Group Sequence as determined by the publisher.
@@ -446,7 +440,6 @@ A subscriber can modify a subscription with a SUBSCRIBE_UPDATE message.
 SUBSCRIBE_UPDATE Message {
   Track Priority (i)
   Group Order (i)
-  Group Expires (i)
   Group Min (i)
   Group Max (i)
 }
@@ -504,7 +497,6 @@ INFO Message {
   Track Priority (i)
   Group Latest (i)
   Group Order (i)
-  Group Expires (i)
 }
 ~~~
 
@@ -518,11 +510,6 @@ A relay without an active subscription SHOULD forward this request upstream
 
 **Group Order**:
 The publisher's intended order of the groups within the subscription: none (0), ascending (1), or descending (2).
-
-**Group Expires**:
-A duration in milliseconds.
-The group SHOULD be dropped if this duration has elapsed after group has finished, including any time spent cached.
-The Subscriber's Group Expires value SHOULD be used instead when smaller.
 
 
 ## INFO_PLEASE
@@ -610,6 +597,9 @@ A generic library or relay MUST NOT inspect or modify the contents unless otherw
 
 # Appendix: Changelog
 Notable changes between versions of this draft.
+
+## moq-transfork-04
+- Removed Group Expires.
 
 ## moq-transfork-03
 - Broadcast and Track have been merged.
