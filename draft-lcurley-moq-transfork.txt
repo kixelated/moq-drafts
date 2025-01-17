@@ -104,10 +104,11 @@ Table of Contents
      6.14. GROUP
      6.15. FRAME
    7.  Appendix: Changelog
-     7.1.  moq-transfork-03
-     7.2.  moq-transfork-02
-     7.3.  moq-transfork-01
-     7.4.  moq-transfork-00
+     7.1.  moq-transfork-04
+     7.2.  moq-transfork-03
+     7.3.  moq-transfork-02
+     7.4.  moq-transfork-01
+     7.5.  moq-transfork-00
    8.  Security Considerations
    9.  IANA Considerations
    10. Normative References
@@ -564,7 +565,6 @@ Table of Contents
      [ Track Path Part (b) ]
      Track Priority (i)
      Group Order (i)
-     Group Expires (i)
      Group Min (i)
      Group Max (i)
    }
@@ -588,12 +588,6 @@ Table of Contents
    sequence number in default (0), ascending (1), or descending (2)
    order.
 
-   *Group Expires*: A duration in milliseconds that applies to all
-   Groups within the subscription.  The group SHOULD be dropped if this
-   duration has elapsed after group has finished, including any time
-   spent cached.  The publisher's Group Expires value (via INFO) SHOULD
-   be used instead when smaller.
-
    *Group Min*: The minimum group sequence number plus 1.  A value of 0
    indicates the latest Group Sequence as determined by the publisher.
 
@@ -609,7 +603,6 @@ Table of Contents
    SUBSCRIBE_UPDATE Message {
      Track Priority (i)
      Group Order (i)
-     Group Expires (i)
      Group Min (i)
      Group Max (i)
    }
@@ -659,7 +652,6 @@ Table of Contents
      Track Priority (i)
      Group Latest (i)
      Group Order (i)
-     Group Expires (i)
    }
 
    *Track Priority*: The priority of this track within the session.  The
@@ -672,11 +664,6 @@ Table of Contents
 
    *Group Order*: The publisher's intended order of the groups within
    the subscription: none (0), ascending (1), or descending (2).
-
-   *Group Expires*: A duration in milliseconds.  The group SHOULD be
-   dropped if this duration has elapsed after group has finished,
-   including any time spent cached.  The Subscriber's Group Expires
-   value SHOULD be used instead when smaller.
 
 6.11.  INFO_PLEASE
 
@@ -752,7 +739,11 @@ Table of Contents
 
    Notable changes between versions of this draft.
 
-7.1.  moq-transfork-03
+7.1.  moq-transfork-04
+
+   *  Removed Group Expires.
+
+7.2.  moq-transfork-03
 
    *  Broadcast and Track have been merged.
 
@@ -772,7 +763,7 @@ Table of Contents
 
    *  Moved the use-cases appendix to a separate document.
 
-7.2.  moq-transfork-02
+7.3.  moq-transfork-02
 
    *  Document version numbers.
 
@@ -780,7 +771,7 @@ Table of Contents
 
    *  Remove ROLE extension.
 
-7.3.  moq-transfork-01
+7.4.  moq-transfork-01
 
    *  Removed datagram support
 
@@ -796,7 +787,7 @@ Table of Contents
 
    Datagram and native QUIC support may be re-added in a future draft.
 
-7.4.  moq-transfork-00
+7.5.  moq-transfork-00
 
    Based on moq-transport-03.  The significant changes have been broken
    into sections.

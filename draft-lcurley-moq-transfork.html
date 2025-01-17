@@ -1270,16 +1270,19 @@ Higher level protocols specify how to use MoqTransfork to encode and deliver vid
             <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-appendix-changelog" class="internal xref">Appendix: Changelog</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
-                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-moq-transfork-03" class="internal xref">moq-transfork-03</a></p>
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-moq-transfork-04" class="internal xref">moq-transfork-04</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
-                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-moq-transfork-02" class="internal xref">moq-transfork-02</a></p>
+                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-moq-transfork-03" class="internal xref">moq-transfork-03</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3">
-                <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-moq-transfork-01" class="internal xref">moq-transfork-01</a></p>
+                <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-moq-transfork-02" class="internal xref">moq-transfork-02</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.4">
-                <p id="section-toc.1-1.7.2.4.1"><a href="#section-7.4" class="auto internal xref">7.4</a>.  <a href="#name-moq-transfork-00" class="internal xref">moq-transfork-00</a></p>
+                <p id="section-toc.1-1.7.2.4.1"><a href="#section-7.4" class="auto internal xref">7.4</a>.  <a href="#name-moq-transfork-01" class="internal xref">moq-transfork-01</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.5">
+                <p id="section-toc.1-1.7.2.5.1"><a href="#section-7.5" class="auto internal xref">7.5</a>.  <a href="#name-moq-transfork-00" class="internal xref">moq-transfork-00</a></p>
 </li>
             </ul>
 </li>
@@ -1817,7 +1820,6 @@ SUBSCRIBE Message {
   [ Track Path Part (b) ]
   Track Priority (i)
   Group Order (i)
-  Group Expires (i)
   Group Min (i)
   Group Max (i)
 }
@@ -1838,16 +1840,12 @@ The publisher <span class="bcp14">SHOULD</span> transmit <em>higher</em> values 
 <p id="section-6.7-7"><strong>Group Order</strong>:
 The transmission order of the Groups within the subscription.
 The publisher <span class="bcp14">SHOULD</span> transmit groups based on their sequence number in default (0), ascending (1), or descending (2) order.<a href="#section-6.7-7" class="pilcrow">¶</a></p>
-<p id="section-6.7-8"><strong>Group Expires</strong>:
-A duration in milliseconds that applies to all Groups within the subscription.
-The group <span class="bcp14">SHOULD</span> be dropped if this duration has elapsed after group has finished, including any time spent cached.
-The publisher's Group Expires value (via INFO) <span class="bcp14">SHOULD</span> be used instead when smaller.<a href="#section-6.7-8" class="pilcrow">¶</a></p>
-<p id="section-6.7-9"><strong>Group Min</strong>:
+<p id="section-6.7-8"><strong>Group Min</strong>:
 The minimum group sequence number plus 1.
-A value of 0 indicates the latest Group Sequence as determined by the publisher.<a href="#section-6.7-9" class="pilcrow">¶</a></p>
-<p id="section-6.7-10"><strong>Group Max</strong>:
+A value of 0 indicates the latest Group Sequence as determined by the publisher.<a href="#section-6.7-8" class="pilcrow">¶</a></p>
+<p id="section-6.7-9"><strong>Group Max</strong>:
 The maximum group sequence number plus 1.
-A value of 0 indicates there is no maximum and the subscription continues indefinitely.<a href="#section-6.7-10" class="pilcrow">¶</a></p>
+A value of 0 indicates there is no maximum and the subscription continues indefinitely.<a href="#section-6.7-9" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="subscribeupdate">
@@ -1861,7 +1859,6 @@ A value of 0 indicates there is no maximum and the subscription continues indefi
 SUBSCRIBE_UPDATE Message {
   Track Priority (i)
   Group Order (i)
-  Group Expires (i)
   Group Min (i)
   Group Max (i)
 }
@@ -1919,7 +1916,6 @@ INFO Message {
   Track Priority (i)
   Group Latest (i)
   Group Order (i)
-  Group Expires (i)
 }
 </pre><a href="#section-6.10-2" class="pilcrow">¶</a>
 </div>
@@ -1931,10 +1927,6 @@ The latest group as currently known by the publisher.
 A relay without an active subscription <span class="bcp14">SHOULD</span> forward this request upstream<a href="#section-6.10-4" class="pilcrow">¶</a></p>
 <p id="section-6.10-5"><strong>Group Order</strong>:
 The publisher's intended order of the groups within the subscription: none (0), ascending (1), or descending (2).<a href="#section-6.10-5" class="pilcrow">¶</a></p>
-<p id="section-6.10-6"><strong>Group Expires</strong>:
-A duration in milliseconds.
-The group <span class="bcp14">SHOULD</span> be dropped if this duration has elapsed after group has finished, including any time spent cached.
-The Subscriber's Group Expires value <span class="bcp14">SHOULD</span> be used instead when smaller.<a href="#section-6.10-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="infoplease">
@@ -2045,166 +2037,178 @@ A generic library or relay <span class="bcp14">MUST NOT</span> inspect or modify
 <a href="#section-7" class="section-number selfRef">7. </a><a href="#name-appendix-changelog" class="section-name selfRef">Appendix: Changelog</a>
       </h2>
 <p id="section-7-1">Notable changes between versions of this draft.<a href="#section-7-1" class="pilcrow">¶</a></p>
-<div id="moq-transfork-03">
+<div id="moq-transfork-04">
 <section id="section-7.1">
-        <h3 id="name-moq-transfork-03">
-<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-moq-transfork-03" class="section-name selfRef">moq-transfork-03</a>
+        <h3 id="name-moq-transfork-04">
+<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-moq-transfork-04" class="section-name selfRef">moq-transfork-04</a>
         </h3>
 <ul class="normal">
 <li class="normal" id="section-7.1-1.1">
-            <p id="section-7.1-1.1.1">Broadcast and Track have been merged.<a href="#section-7.1-1.1.1" class="pilcrow">¶</a></p>
+            <p id="section-7.1-1.1.1">Removed Group Expires.<a href="#section-7.1-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.1-1.2">
-            <p id="section-7.1-1.2.1">Tracks now have a variable length path instead of a (broadcast, name) tuple<a href="#section-7.1-1.2.1" class="pilcrow">¶</a></p>
+        </ul>
+</section>
+</div>
+<div id="moq-transfork-03">
+<section id="section-7.2">
+        <h3 id="name-moq-transfork-03">
+<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-moq-transfork-03" class="section-name selfRef">moq-transfork-03</a>
+        </h3>
+<ul class="normal">
+<li class="normal" id="section-7.2-1.1">
+            <p id="section-7.2-1.1.1">Broadcast and Track have been merged.<a href="#section-7.2-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.1-1.3">
-            <p id="section-7.1-1.3.1">ANNOUNCE contains the suffix instead of the full path.<a href="#section-7.1-1.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.2-1.2">
+            <p id="section-7.2-1.2.1">Tracks now have a variable length path instead of a (broadcast, name) tuple<a href="#section-7.2-1.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.1-1.4">
-            <p id="section-7.1-1.4.1">ANNOUNCE contains a new status: active, ended, or live.<a href="#section-7.1-1.4.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.2-1.3">
+            <p id="section-7.2-1.3.1">ANNOUNCE contains the suffix instead of the full path.<a href="#section-7.2-1.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.1-1.5">
-            <p id="section-7.1-1.5.1">GROUP_DROP has been renamed to SUBSCRIBE_GAP.<a href="#section-7.1-1.5.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.2-1.4">
+            <p id="section-7.2-1.4.1">ANNOUNCE contains a new status: active, ended, or live.<a href="#section-7.2-1.4.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.1-1.6">
-            <p id="section-7.1-1.6.1">FETCH is now at frame boundaries instead of byte offsets.<a href="#section-7.1-1.6.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.2-1.5">
+            <p id="section-7.2-1.5.1">GROUP_DROP has been renamed to SUBSCRIBE_GAP.<a href="#section-7.2-1.5.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.1-1.7">
-            <p id="section-7.1-1.7.1">The protocol is more polite: some messages have been renamed to *_PLEASE.<a href="#section-7.1-1.7.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.2-1.6">
+            <p id="section-7.2-1.6.1">FETCH is now at frame boundaries instead of byte offsets.<a href="#section-7.2-1.6.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.1-1.8">
-            <p id="section-7.1-1.8.1">Moved the use-cases appendix to a separate document.<a href="#section-7.1-1.8.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.2-1.7">
+            <p id="section-7.2-1.7.1">The protocol is more polite: some messages have been renamed to *_PLEASE.<a href="#section-7.2-1.7.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-7.2-1.8">
+            <p id="section-7.2-1.8.1">Moved the use-cases appendix to a separate document.<a href="#section-7.2-1.8.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
 </div>
 <div id="moq-transfork-02">
-<section id="section-7.2">
+<section id="section-7.3">
         <h3 id="name-moq-transfork-02">
-<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-moq-transfork-02" class="section-name selfRef">moq-transfork-02</a>
+<a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-moq-transfork-02" class="section-name selfRef">moq-transfork-02</a>
         </h3>
 <ul class="normal">
-<li class="normal" id="section-7.2-1.1">
-            <p id="section-7.2-1.1.1">Document version numbers.<a href="#section-7.2-1.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-7.3-1.1">
+            <p id="section-7.3-1.1.1">Document version numbers.<a href="#section-7.3-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.2-1.2">
-            <p id="section-7.2-1.2.1">Added ANNOUNCE_INTEREST to opt-into ANNOUNCE messages.<a href="#section-7.2-1.2.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.3-1.2">
+            <p id="section-7.3-1.2.1">Added ANNOUNCE_INTEREST to opt-into ANNOUNCE messages.<a href="#section-7.3-1.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.2-1.3">
-            <p id="section-7.2-1.3.1">Remove ROLE extension.<a href="#section-7.2-1.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.3-1.3">
+            <p id="section-7.3-1.3.1">Remove ROLE extension.<a href="#section-7.3-1.3.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
 </div>
 <div id="moq-transfork-01">
-<section id="section-7.3">
+<section id="section-7.4">
         <h3 id="name-moq-transfork-01">
-<a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-moq-transfork-01" class="section-name selfRef">moq-transfork-01</a>
+<a href="#section-7.4" class="section-number selfRef">7.4. </a><a href="#name-moq-transfork-01" class="section-name selfRef">moq-transfork-01</a>
         </h3>
 <ul class="normal">
-<li class="normal" id="section-7.3-1.1">
-            <p id="section-7.3-1.1.1">Removed datagram support<a href="#section-7.3-1.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-7.4-1.1">
+            <p id="section-7.4-1.1.1">Removed datagram support<a href="#section-7.4-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.3-1.2">
-            <p id="section-7.3-1.2.1">Removed native QUIC support<a href="#section-7.3-1.2.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.4-1.2">
+            <p id="section-7.4-1.2.1">Removed native QUIC support<a href="#section-7.4-1.2.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.3-1.3">
-            <p id="section-7.3-1.3.1">Moved Expires from GROUP to SUBSCRIBE<a href="#section-7.3-1.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.4-1.3">
+            <p id="section-7.4-1.3.1">Moved Expires from GROUP to SUBSCRIBE<a href="#section-7.4-1.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.3-1.4">
-            <p id="section-7.3-1.4.1">Added FETCH_UPDATE<a href="#section-7.3-1.4.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.4-1.4">
+            <p id="section-7.4-1.4.1">Added FETCH_UPDATE<a href="#section-7.4-1.4.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.3-1.5">
-            <p id="section-7.3-1.5.1">Added ROLE=Any<a href="#section-7.3-1.5.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.4-1.5">
+            <p id="section-7.4-1.5.1">Added ROLE=Any<a href="#section-7.4-1.5.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.3-1.6">
-            <p id="section-7.3-1.6.1">Track Priority is now descending.<a href="#section-7.3-1.6.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.4-1.6">
+            <p id="section-7.4-1.6.1">Track Priority is now descending.<a href="#section-7.4-1.6.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-7.3-2">Datagram and native QUIC support may be re-added in a future draft.<a href="#section-7.3-2" class="pilcrow">¶</a></p>
+<p id="section-7.4-2">Datagram and native QUIC support may be re-added in a future draft.<a href="#section-7.4-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="moq-transfork-00">
-<section id="section-7.4">
+<section id="section-7.5">
         <h3 id="name-moq-transfork-00">
-<a href="#section-7.4" class="section-number selfRef">7.4. </a><a href="#name-moq-transfork-00" class="section-name selfRef">moq-transfork-00</a>
+<a href="#section-7.5" class="section-number selfRef">7.5. </a><a href="#name-moq-transfork-00" class="section-name selfRef">moq-transfork-00</a>
         </h3>
-<p id="section-7.4-1">Based on moq-transport-03.
-The significant changes have been broken into sections.<a href="#section-7.4-1" class="pilcrow">¶</a></p>
+<p id="section-7.5-1">Based on moq-transport-03.
+The significant changes have been broken into sections.<a href="#section-7.5-1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-7.4-2.1">
-            <p id="section-7.4-2.1.1">Bikeshedding<a href="#section-7.4-2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-7.5-2.1">
+            <p id="section-7.5-2.1.1">Bikeshedding<a href="#section-7.5-2.1.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-7.4-2.1.2.1">
-                <p id="section-7.4-2.1.2.1.1">Renamed Track Namespace to Broadcast<a href="#section-7.4-2.1.2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-7.5-2.1.2.1">
+                <p id="section-7.5-2.1.2.1.1">Renamed Track Namespace to Broadcast<a href="#section-7.5-2.1.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-7.4-2.1.2.2">
-                <p id="section-7.4-2.1.2.2.1">Renamed Object to Frame<a href="#section-7.4-2.1.2.2.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-7.5-2.1.2.2">
+                <p id="section-7.5-2.1.2.2.1">Renamed Object to Frame<a href="#section-7.5-2.1.2.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 </li>
-          <li class="normal" id="section-7.4-2.2">
-            <p id="section-7.4-2.2.1">Each unidirectional stream contains a single group.<a href="#section-7.4-2.2.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.5-2.2">
+            <p id="section-7.5-2.2.1">Each unidirectional stream contains a single group.<a href="#section-7.5-2.2.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-7.4-2.2.2.1">
-                <p id="section-7.4-2.2.2.1.1">Removed stream per track.<a href="#section-7.4-2.2.2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-7.5-2.2.2.1">
+                <p id="section-7.5-2.2.2.1.1">Removed stream per track.<a href="#section-7.5-2.2.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-7.4-2.2.2.2">
-                <p id="section-7.4-2.2.2.2.1">Removed stream per object.<a href="#section-7.4-2.2.2.2.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-7.5-2.2.2.2">
+                <p id="section-7.5-2.2.2.2.1">Removed stream per object.<a href="#section-7.5-2.2.2.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 </li>
-          <li class="normal" id="section-7.4-2.3">
-            <p id="section-7.4-2.3.1">Subscriber chooses track priority and group order.<a href="#section-7.4-2.3.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.5-2.3">
+            <p id="section-7.5-2.3.1">Subscriber chooses track priority and group order.<a href="#section-7.5-2.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.4-2.4">
-            <p id="section-7.4-2.4.1">Bidirectional control stream per ANNOUNCE/SUBSCRIBE/FETCH/INFO.<a href="#section-7.4-2.4.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.5-2.4">
+            <p id="section-7.5-2.4.1">Bidirectional control stream per ANNOUNCE/SUBSCRIBE/FETCH/INFO.<a href="#section-7.5-2.4.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-7.4-2.4.2.1">
-                <p id="section-7.4-2.4.2.1.1">Removed ANNOUNCE_ERROR<a href="#section-7.4-2.4.2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-7.5-2.4.2.1">
+                <p id="section-7.5-2.4.2.1.1">Removed ANNOUNCE_ERROR<a href="#section-7.5-2.4.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-7.4-2.4.2.2">
-                <p id="section-7.4-2.4.2.2.1">Removed ANNOUNCE_DONE<a href="#section-7.4-2.4.2.2.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-7.5-2.4.2.2">
+                <p id="section-7.5-2.4.2.2.1">Removed ANNOUNCE_DONE<a href="#section-7.5-2.4.2.2.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-7.4-2.4.2.3">
-                <p id="section-7.4-2.4.2.3.1">Removed UNANNOUNCE<a href="#section-7.4-2.4.2.3.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-7.5-2.4.2.3">
+                <p id="section-7.5-2.4.2.3.1">Removed UNANNOUNCE<a href="#section-7.5-2.4.2.3.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-7.4-2.4.2.4">
-                <p id="section-7.4-2.4.2.4.1">Removed SUBSCRIBE_OK<a href="#section-7.4-2.4.2.4.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-7.5-2.4.2.4">
+                <p id="section-7.5-2.4.2.4.1">Removed SUBSCRIBE_OK<a href="#section-7.5-2.4.2.4.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-7.4-2.4.2.5">
-                <p id="section-7.4-2.4.2.5.1">Removed SUBSCRIBE_ERROR<a href="#section-7.4-2.4.2.5.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-7.5-2.4.2.5">
+                <p id="section-7.5-2.4.2.5.1">Removed SUBSCRIBE_ERROR<a href="#section-7.5-2.4.2.5.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-7.4-2.4.2.6">
-                <p id="section-7.4-2.4.2.6.1">Removed SUBSCRIBE_DONE<a href="#section-7.4-2.4.2.6.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-7.5-2.4.2.6">
+                <p id="section-7.5-2.4.2.6.1">Removed SUBSCRIBE_DONE<a href="#section-7.5-2.4.2.6.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-7.4-2.4.2.7">
-                <p id="section-7.4-2.4.2.7.1">Removed UNSUBSCRIBE<a href="#section-7.4-2.4.2.7.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-7.5-2.4.2.7">
+                <p id="section-7.5-2.4.2.7.1">Removed UNSUBSCRIBE<a href="#section-7.5-2.4.2.7.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 </li>
-          <li class="normal" id="section-7.4-2.5">
-            <p id="section-7.4-2.5.1">Groups IDs are sequential.<a href="#section-7.4-2.5.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.5-2.5">
+            <p id="section-7.5-2.5.1">Groups IDs are sequential.<a href="#section-7.5-2.5.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.4-2.6">
-            <p id="section-7.4-2.6.1">All sequences are explicitly delivered.<a href="#section-7.4-2.6.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.5-2.6">
+            <p id="section-7.5-2.6.1">All sequences are explicitly delivered.<a href="#section-7.5-2.6.1" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-7.4-2.6.2.1">
-                <p id="section-7.4-2.6.2.1.1">(unreliable) GROUP for each sequence.<a href="#section-7.4-2.6.2.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-7.5-2.6.2.1">
+                <p id="section-7.5-2.6.2.1.1">(unreliable) GROUP for each sequence.<a href="#section-7.5-2.6.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-7.4-2.6.2.2">
-                <p id="section-7.4-2.6.2.2.1">Or (reliable) SUBSCRIBE_GAP when a stream is reset.<a href="#section-7.4-2.6.2.2.1" class="pilcrow">¶</a></p>
+              <li class="normal" id="section-7.5-2.6.2.2">
+                <p id="section-7.5-2.6.2.2.1">Or (reliable) SUBSCRIBE_GAP when a stream is reset.<a href="#section-7.5-2.6.2.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 </li>
-          <li class="normal" id="section-7.4-2.7">
-            <p id="section-7.4-2.7.1">Fetch Group via offset<a href="#section-7.4-2.7.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.5-2.7">
+            <p id="section-7.5-2.7.1">Fetch Group via offset<a href="#section-7.5-2.7.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.4-2.8">
-            <p id="section-7.4-2.8.1">Added INFO_PLEASE and INFO<a href="#section-7.4-2.8.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.5-2.8">
+            <p id="section-7.5-2.8.1">Added INFO_PLEASE and INFO<a href="#section-7.5-2.8.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-7.4-2.9">
-            <p id="section-7.4-2.9.1">Replaced SUBSCRIBE_OK with INFO<a href="#section-7.4-2.9.1" class="pilcrow">¶</a></p>
+          <li class="normal" id="section-7.5-2.9">
+            <p id="section-7.5-2.9.1">Replaced SUBSCRIBE_OK with INFO<a href="#section-7.5-2.9.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
 </section>
