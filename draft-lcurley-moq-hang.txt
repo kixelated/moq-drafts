@@ -194,8 +194,8 @@ Table of Contents
    stream.
 
    Hang uses the VideoDecoderConfig (https://www.w3.org/TR/
-   webcodecs/#video-decoder-config).  This contains all of the
-   information needed to configure a video decoder.
+   webcodecs/#video-decoder-config).  Any Uint8Array fields are hex-
+   encoded into a string.
 
    The track field includes the name and priority of the track within
    the broadcast.
@@ -217,10 +217,8 @@ Table of Contents
            },
            "config": {
                    "codec": "avc1.64001f",
-                   "dimensions": {
-                           "width": 1280,
-                           "height": 720
-                   },
+                   "codedWidth": 1280,
+                   "codedHeight": 720,
                    "bitrate": 6000000,
                    "framerate": 30.0
            }
@@ -235,8 +233,8 @@ Table of Contents
    the broadcast.
 
    The config field contains an AudioDecoderConfig
-   (https://www.w3.org/TR/webcodecs/#audio-decoder-config).  This
-   contains all of the information needed to configure an audio decoder.
+   (https://www.w3.org/TR/webcodecs/#audio-decoder-config).  Any
+   Uint8Array fields are hex-encoded into a string.
 
    type AudioTrack = {
            "track": {
