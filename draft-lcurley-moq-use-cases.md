@@ -36,8 +36,8 @@ Media over QUIC is still in the concept phase; a loose collection of ideas and d
 It's difficult to grasp how to utilize the various layers:
 
 - QUIC: A transport layer that provides reliable, ordered, and secure streams.
-- MoqTransfork: A pub/sub layer that provides caching and fanout.
-- MoqKarp: A proposed media layer on top of MoqTransfork that deals with encoding and containers.
+- moq-lite: A pub/sub layer that provides caching and fanout.
+- moq-karp: A proposed media layer on top of moq-lite that deals with encoding and containers.
 - Application: Your application that utilizes any of the above layers.
 
 This document briefly overviews how live media works and how you could use MoQ to deliver it.
@@ -62,7 +62,7 @@ A GoP is a set of frames that MAY depend on each other and MUST NOT depend on ot
 Each frame has a decode order (DTS) and a frame MUST NOT depend on frames with a higher DTS.
 
 This perfectly maps to a QUIC stream, as they too are independent and ordered.
-The easiest way to use MoqTransfork is to send each GoP as a GROUP with each frame as a FRAME, hence the names.
+The easiest way to use moq-lite is to send each GoP as a GROUP with each frame as a FRAME, hence the names.
 
 Each SUBSCRIBE starts at a Group to ensure that it starts with an I-Frame.
 Each Group is delivered in decode order ensuring that all frames are decodable (no artifacts).
@@ -93,7 +93,7 @@ A subscriber could limit bandwidth usage by choose to only receive the base laye
 During congestion, the base layer can be prioritized while the enhancement layers can be deprioritized or dropped.
 However, the cost is a small increase in bitrate (10%) as limiting potential references can only hurt the compression ratio.
 
-When using MoqTransfork, each layer is delivered as a separate Track.
+When using moq-lite, each layer is delivered as a separate Track.
 This allows the subscriber to choose which layers to receive and how to prioritize them in SUBSCRIBE.
 It also enables layers to be prioritized within the layer application, for example Alice's base layer is more important than Bob's enhancement layer.
 
@@ -107,7 +107,7 @@ In theory, transmitting enhancement layers as tracks like mentioned above could 
 This would occur when enhancement layers are not self-referential, a rare configuration which also hurts the compression ratio.
 And in practice, there's no discernible user impact given the disproportionate size difference between base and enhancement layers.
 
-The ability to drop individual non-reference frames in the middle of a group is an explicit non-goal for MoqTransfork.
+The ability to drop individual non-reference frames in the middle of a group is an explicit non-goal for moq-lite.
 
 
 # Audio
@@ -117,7 +117,7 @@ Unlike video, audio is simple and yet has perhaps more potential for optimizatio
 Audio samples are very small and for the sake of compression, are grouped into a frame.
 This depends on the codec and the sample rate but each frame is typically 10-50ms of audio.
 
-Audio frames are independent, which means they map nicely to MoqTransfork Groups.
+Audio frames are independent, which means they map nicely to moq-lite Groups.
 Each audio frame can be transmitted as a GROUP with a single FRAME.
 
 ## Groups
@@ -134,7 +134,7 @@ Audio frames are a good candidate for FEC given that they are small and independ
 In an ideal world, FEC would be performed by QUIC based on the properties of the hop.
 However this is not currently not supported and FEC is left to the application.
 
-In MoqTransfork, each FEC packet is transmitted as a separate GROUP with a single FRAME.
+In moq-lite, each FEC packet is transmitted as a separate GROUP with a single FRAME.
 This means using QUIC streams instead of QUIC datagrams to automatically adjust to the viewer's RTT, automatically retransmitting in scenarios where RTT is small.
 Lost packets will be retransmitted unless a real-time subscriber updates the subscription to skip them.
 For example, if group 3 and group 5 are used to reconstruct group 4, then the subscriber can update the subscription to start at group 5, causing group 4 to be skipped.
@@ -144,7 +144,7 @@ This can result in wasted bandwidth versus something like a timeout on the sende
 
 
 # Metadata
-There's a number of non-media use cases that can be served by MoqTransfork.
+There's a number of non-media use cases that can be served by moq-lite.
 
 ## Catalog
 Originally part of the transport itself, the catalog is a list of all tracks within a broadcast.
@@ -154,7 +154,7 @@ The proposed MoQ catalog format supports live updates.
 It does this by encoding a base JSON blob and then applying JSON patches over time.
 If the number of deltas becomes too large, the producer can start over with a new base JSON blob.
 
-In MoqTransfork, the base and all deltas are a single GROUP.
+In moq-lite, the base and all deltas are a single GROUP.
 The base is the first FRAME and all deltas are subsequent FRAMEs.
 The producer can create a new GROUP to start over, repeating the process.
 
@@ -181,7 +181,7 @@ A publisher could monitor the session RTT or stream acknowledgements to get a se
 However, this only applies to the first hop and won't be applicable when relays are involved.
 
 # Latency
-One explicit goal of MoqTransfork is to support multiple latency targets.
+One explicit goal of moq-lite is to support multiple latency targets.
 
 This is accomplished by using the same Tracks and Group for all viewers, but slightly changing the behavior based on the subscription.
 This is driven by the subscriber, allowing them to choose the trade-off between latency and reliability.
@@ -260,7 +260,7 @@ However, this can result in buffering during congestion and provides a similar u
 
 ## VOD / DVR
 Video on Demand (VOD) and Digital Video Recorder (DVR) both involve seeking backwards in a live stream.
-MoqTransfork can serve this use-case too, don't worry.
+moq-lite can serve this use-case too, don't worry.
 
 A VOD viewer could issue:
 
@@ -291,7 +291,7 @@ SUBSCRIBE track=video priority=0 order=DESC
 All of these separate viewers could be watching the same broadcast.
 How is a relay supposed to fetch the content from upstream?
 
-MoqTransfork addresses this by providing the publisher's Track Priority and Group Order in the INFO message.
+moq-lite addresses this by providing the publisher's Track Priority and Group Order in the INFO message.
 This is the intended behavior for the first hop and dictates which viewers are preferred.
 
 For example, suppose the producer chooses:
@@ -325,13 +325,13 @@ If viewers have the same priority/order, then the relay should use the viewer's 
 # Broadcast
 A broadcast is a collection of tracks from a single producer.
 This usually includes an audio track and/or a video track, but there are reasons to have more than that.
-This is transparent to moq-transfork, as the a higher level application is responsible for any grouping between tracks.
+This is transparent to moq-lite, as the a higher level application is responsible for any grouping between tracks.
 
 ## ABR
 Virtually all mass fan-out use-cases rely on Adaptive Bitrate (ABR) streaming.
 The idea is to encode the same content at multiple bitrates and resolutions, allowing the viewer to choose based on their unique situation.
 
-MoqTransfork unsurprisingly supports this via multiple Tracks, but relies on the application to determine the relationship between them.
+moq-lite unsurprisingly supports this via multiple Tracks, but relies on the application to determine the relationship between them.
 This is often done via a `catalog` track that details each track's name, bitrate, resolution, and codec.
 This includes how a group in one track corresponds to a group in another track.
 A common approach is to use the same Group Sequence number for all tracks, or perhaps utilize a `timeline` track to map between Group Sequences and presentation timestamps.
@@ -382,7 +382,7 @@ This is a more efficient use of bandwidth than ABR, but it requires more complex
 
 # Conferences
 Some applications involve multiple producers, such as a conference calls or a live events.
-Even though these are separate broadcasts from potentially separate origins, MoqTransfork can still serve them over the same session.
+Even though these are separate broadcasts from potentially separate origins, moq-lite can still serve them over the same session.
 
 ## Discovery
 The first step to joining a conference is to discover the available tracks.

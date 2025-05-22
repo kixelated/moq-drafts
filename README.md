@@ -2,12 +2,12 @@
 
 This is the working area for individual Internet-Drafts.
 
-## Media over QUIC - Transfork
+## Media over QUIC - Lite
 
-* [Editor's Copy](https://kixelated.github.io/moq-drafts/#go.draft-lcurley-moq-transfork.html)
-* [Datatracker Page](https://datatracker.ietf.org/doc/draft-lcurley-moq-transfork)
-* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-lcurley-moq-transfork)
-* [Compare Editor's Copy to Individual Draft](https://kixelated.github.io/moq-drafts/#go.draft-lcurley-moq-transfork.diff)
+* [Editor's Copy](https://kixelated.github.io/moq-drafts/#go.draft-lcurley-moq-lite.html)
+* [Datatracker Page](https://datatracker.ietf.org/doc/draft-lcurley-moq-lite)
+* [Individual Draft](https://datatracker.ietf.org/doc/html/draft-lcurley-moq-lite)
+* [Compare Editor's Copy to Individual Draft](https://kixelated.github.io/moq-drafts/#go.draft-lcurley-moq-lite.diff)
 
 ## Media over QUIC - Use Cases
 
