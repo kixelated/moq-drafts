@@ -122,7 +122,7 @@ This way catalog updates are rare and a client MAY choose to not subscribe.
 A video track contains the necessary information to decode a video stream.
 
 Hang uses the [VideoDecoderConfig](https://www.w3.org/TR/webcodecs/#video-decoder-config).
-This contains all of the information needed to configure a video decoder.
+Any Uint8Array fields are hex-encoded into a string.
 
 The `track` field includes the name and priority of the track within the broadcast.
 
@@ -146,10 +146,8 @@ For example:
 	},
 	"config": {
 		"codec": "avc1.64001f",
-		"dimensions": {
-			"width": 1280,
-			"height": 720
-		},
+		"codedWidth": 1280,
+		"codedHeight": 720,
 		"bitrate": 6000000,
 		"framerate": 30.0
 	}
@@ -163,7 +161,7 @@ An audio track contains the necessary information to decode an audio stream.
 The `track` field includes the name and priority of the track within the broadcast.
 
 The `config` field contains an [AudioDecoderConfig](https://www.w3.org/TR/webcodecs/#audio-decoder-config).
-This contains all of the information needed to configure an audio decoder.
+Any Uint8Array fields are hex-encoded into a string.
 
 ~~~
 type AudioTrack = {
