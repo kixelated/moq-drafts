@@ -345,7 +345,7 @@ ANNOUNCE_INIT Message {
 **Suffix Count**:
 The number of active broadcast path suffixes that follow.
 This can be 0.
-A publisher SHOULD NOT include duplicate suffixes in a single ANNOUNCE_INIT message.
+A publisher MUST NOT include duplicate suffixes in a single ANNOUNCE_INIT message.
 
 **Broadcast Path Suffix**:
 Each suffix is combined with the broadcast path prefix from ANNOUNCE_PLEASE to form the full broadcast path.
@@ -358,7 +358,7 @@ A publisher sends an ANNOUNCE message to advertise a change in broadcast availab
 Only the suffix is encoded on the wire, as the full path can be constructed by prepending the requested prefix.
 
 The status is relative to the ANNOUNCE_INIT and all prior ANNOUNCE messages combined.
-A client MUST ONLY alternate between status values (from active to ended or vice versa), encoded on the wire so the receiver doesn't need to maintain a set of active broadcasts.
+A client MUST ONLY alternate between status values (from active to ended or vice versa).
 
 ~~~
 ANNOUNCE Message {
