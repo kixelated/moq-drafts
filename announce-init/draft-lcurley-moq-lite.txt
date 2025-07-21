@@ -475,7 +475,8 @@ Table of Contents
 
    The publisher MUST respond with an ANNOUNCE_INIT message containing
    any matching and active broadcasts, followed by ANNOUNCE messages for
-   any updates.
+   any updates.  Implementations SHOULD consider reasonable limits on
+   the number of matching broadcasts to prevent resource exhaustion.
 
 6.6.  ANNOUNCE_INIT
 
@@ -491,7 +492,7 @@ Table of Contents
    ANNOUNCE_PLEASE and immediately return the ANNOUNCE_INIT response.
    Without ANNOUNCE_INIT, the API server would have use a timer to wait
    until ANNOUNCE to guess when all ANNOUNCE messages have been
-   recieved.
+   received.
 
    ANNOUNCE_INIT Message {
      Suffix Count (i),
@@ -501,22 +502,23 @@ Table of Contents
    }
 
    *Suffix Count*: The number of active broadcast path suffixes that
-   follow.  This can be 0.
+   follow.  This can be 0.  A publisher SHOULD NOT include duplicate
+   suffixes in a single ANNOUNCE_INIT message.
 
    *Broadcast Path Suffix*: Each suffix is combined with the broadcast
    path prefix from ANNOUNCE_PLEASE to form the full broadcast path.
-   This all currently active broadcasts matching the prefix.
+   This includes all currently active broadcasts matching the prefix.
 
 6.7.  ANNOUNCE
 
    A publisher sends an ANNOUNCE message to advertise a change in
    broadcast availability.  Only the suffix is encoded on the wire, as
-   the full path can constructed by prepending the requested prefix.
+   the full path can be constructed by prepending the requested prefix.
 
    The status is relative to the ANNOUNCE_INIT and all prior ANNOUNCE
-   messages combined.  A client MUST ONLY toggle the status, encoded on
-   the wire so the receiver doesn't need to maintain a set of active
-   broadcasts.
+   messages combined.  A client MUST ONLY alternate between status
+   values (from active to ended or vice versa), encoded on the wire so
+   the receiver doesn't need to maintain a set of active broadcasts.
 
    ANNOUNCE Message {
      Announce Status (i),
