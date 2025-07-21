@@ -1735,7 +1735,7 @@ ANNOUNCE_INIT Message {
 <p id="section-6.6-4"><strong>Suffix Count</strong>:
 The number of active broadcast path suffixes that follow.
 This can be 0.
-A publisher <span class="bcp14">SHOULD NOT</span> include duplicate suffixes in a single ANNOUNCE_INIT message.<a href="#section-6.6-4" class="pilcrow">¶</a></p>
+A publisher <span class="bcp14">MUST NOT</span> include duplicate suffixes in a single ANNOUNCE_INIT message.<a href="#section-6.6-4" class="pilcrow">¶</a></p>
 <p id="section-6.6-5"><strong>Broadcast Path Suffix</strong>:
 Each suffix is combined with the broadcast path prefix from ANNOUNCE_PLEASE to form the full broadcast path.
 This includes all currently active broadcasts matching the prefix.<a href="#section-6.6-5" class="pilcrow">¶</a></p>
@@ -1749,7 +1749,7 @@ This includes all currently active broadcasts matching the prefix.<a href="#sect
 <p id="section-6.7-1">A publisher sends an ANNOUNCE message to advertise a change in broadcast availability.
 Only the suffix is encoded on the wire, as the full path can be constructed by prepending the requested prefix.<a href="#section-6.7-1" class="pilcrow">¶</a></p>
 <p id="section-6.7-2">The status is relative to the ANNOUNCE_INIT and all prior ANNOUNCE messages combined.
-A client <span class="bcp14">MUST</span> ONLY alternate between status values (from active to ended or vice versa), encoded on the wire so the receiver doesn't need to maintain a set of active broadcasts.<a href="#section-6.7-2" class="pilcrow">¶</a></p>
+A client <span class="bcp14">MUST</span> ONLY alternate between status values (from active to ended or vice versa).<a href="#section-6.7-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-6.7-3">
 <pre>
 ANNOUNCE Message {

@@ -502,7 +502,7 @@ Table of Contents
    }
 
    *Suffix Count*: The number of active broadcast path suffixes that
-   follow.  This can be 0.  A publisher SHOULD NOT include duplicate
+   follow.  This can be 0.  A publisher MUST NOT include duplicate
    suffixes in a single ANNOUNCE_INIT message.
 
    *Broadcast Path Suffix*: Each suffix is combined with the broadcast
@@ -517,8 +517,7 @@ Table of Contents
 
    The status is relative to the ANNOUNCE_INIT and all prior ANNOUNCE
    messages combined.  A client MUST ONLY alternate between status
-   values (from active to ended or vice versa), encoded on the wire so
-   the receiver doesn't need to maintain a set of active broadcasts.
+   values (from active to ended or vice versa).
 
    ANNOUNCE Message {
      Announce Status (i),
