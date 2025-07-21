@@ -23,7 +23,7 @@ informative:
 
 --- abstract
 
-Moq-Lite is designed to fanout live content from publishers to any number of subscribers across the internet.
+moq-lite is designed to fanout live content from publishers to any number of subscribers across the internet.
 Liveliness is achieved by using QUIC to prioritize the most important content, potentially starving or dropping other content, to avoid head-of-line blocking while respecting encoding dependencies.
 While designed for media, it is an agnostic transport, allowing relays and CDNs to forward content without knowledge of codecs, containers, or encryption keys.
 
@@ -193,7 +193,7 @@ Otherwise, the server replies with a SESSION_SERVER message to complete the hand
 Afterwards, both endpoints SHOULD send SESSION_UPDATE messages, such as after a significant change in the session bitrate.
 
 This draft's version is combined with the constant `0xff0dad00`.
-For example, moq-lite-draft-03 is identified as `0xff0dad03`.
+For example, moq-lite-draft-04 is identified as `0xff0dad04`.
 
 
 ### Announce
@@ -201,18 +201,23 @@ A subscriber can open a Announce Stream to discover broadcasts matching a prefix
 This is OPTIONAL and the application can determine track paths out-of-band.
 
 The subscriber creates the stream with a ANNOUNCE_PLEASE message.
-The publisher replies with ANNOUNCE messages for any matching broadcasts.
+The publisher replies with an ANNOUNCE_INIT message containing all currently active broadcasts that currently match the prefix, followed by ANNOUNCE messages for any changes.
+
+The ANNOUNCE_INIT message contains an array of all currently active broadcast paths encoded as a suffix.
+Each path in ANNOUNCE_INIT can be treated as if it were an ANNOUNCE message with status `active`.
+
+After ANNOUNCE_INIT, the publisher sends ANNOUNCE messages for any changes also encoded as a suffix.
 Each ANNOUNCE message contains one of the following statuses:
 
 - `active`: a matching broadcast is available.
 - `ended`: a previously `active` broadcast is no longer available.
 
-Each broadcast starts as `ended` and MUST alternate between `active` and `ended`.
+Each broadcast starts as `ended` (unless included in ANNOUNCE_INIT) and MUST alternate between `active` and `ended`.
 The subscriber MUST reset the stream if it receives a duplicate status, such as two `active` statuses in a row or an `ended` without `active`.
 When the stream is closed, the subscriber MUST assume that all broadcasts are now `ended`.
 
 Path prefix matching and equality is done on a byte-by-byte basis.
-There MAY be multiple Announce Streams, potentially containing overlapping prefixes, that get their own copy of each ANNOUNCE.
+There MAY be multiple Announce Streams, potentially containing overlapping prefixes, that get their own ANNOUNCE_INIT and ANNOUNCE messages.
 
 ## Subscribe
 A subscriber can open a Subscribe Stream to request a Track.
@@ -315,14 +320,45 @@ ANNOUNCE_PLEASE Message {
 **Broadcast Path Prefix**:
 Indicate interest for any broadcasts with a path that starts with this prefix.
 
-The publisher MAY close the stream with an error code if the prefix is too expansive.
-Otherwise, the publisher SHOULD respond with an ANNOUNCE message for any matching broadcasts.
+The publisher MUST respond with an ANNOUNCE_INIT message containing any matching and active broadcasts, followed by ANNOUNCE messages for any updates.
+Implementations SHOULD consider reasonable limits on the number of matching broadcasts to prevent resource exhaustion.
+
+
+
+## ANNOUNCE_INIT
+A publisher sends an ANNOUNCE_INIT message immediately after receiving an ANNOUNCE_PLEASE to communicate all currently active broadcasts that match the requested prefix.
+Only the suffixes are encoded on the wire, as the full path can be constructed by prepending the requested prefix.
+
+This message is useful to avoid race conditions, as ANNOUNCE_INIT does not trickle in like ANNOUNCE messages.
+For example, an API server that wants to list the current participants could issue an ANNOUNCE_PLEASE and immediately return the ANNOUNCE_INIT response.
+Without ANNOUNCE_INIT, the API server would have use a timer to wait until ANNOUNCE to guess when all ANNOUNCE messages have been received.
+
+~~~
+ANNOUNCE_INIT Message {
+  Suffix Count (i),
+  [
+    Broadcast Path Suffix (s),
+  ]...
+}
+~~~
+
+**Suffix Count**:
+The number of active broadcast path suffixes that follow.
+This can be 0.
+A publisher MUST NOT include duplicate suffixes in a single ANNOUNCE_INIT message.
+
+**Broadcast Path Suffix**:
+Each suffix is combined with the broadcast path prefix from ANNOUNCE_PLEASE to form the full broadcast path.
+This includes all currently active broadcasts matching the prefix.
 
 
 
 ## ANNOUNCE
-A publisher sends an ANNOUNCE message to advertise a broadcast in response to an ANNOUNCE_PLEASE.
-Only the suffix is encoded on the wire, the full path is constructed by prepending the requested prefix.
+A publisher sends an ANNOUNCE message to advertise a change in broadcast availability.
+Only the suffix is encoded on the wire, as the full path can be constructed by prepending the requested prefix.
+
+The status is relative to the ANNOUNCE_INIT and all prior ANNOUNCE messages combined.
+A client MUST ONLY alternate between status values (from active to ended or vice versa).
 
 ~~~
 ANNOUNCE Message {
@@ -425,8 +461,13 @@ An application specific payload.
 A generic library or relay MUST NOT inspect or modify the contents unless otherwise negotiated.
 
 
-
 # Appendix A: Changelog
+
+## moq-lite-01
+- Added ANNOUNCE_INIT.
+
+
+# Appendix B: Upstream Differences
 A quick comparison of moq-lite and moq-transport-10:
 
 ## Deleted Messages
