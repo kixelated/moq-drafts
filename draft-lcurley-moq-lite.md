@@ -321,6 +321,7 @@ ANNOUNCE_PLEASE Message {
 Indicate interest for any broadcasts with a path that starts with this prefix.
 
 The publisher MUST respond with an ANNOUNCE_INIT message containing any matching and active broadcasts, followed by ANNOUNCE messages for any updates.
+Implementations SHOULD consider reasonable limits on the number of matching broadcasts to prevent resource exhaustion.
 
 
 
@@ -330,7 +331,7 @@ Only the suffixes are encoded on the wire, as the full path can be constructed b
 
 This message is useful to avoid race conditions, as ANNOUNCE_INIT does not trickle in like ANNOUNCE messages.
 For example, an API server that wants to list the current participants could issue an ANNOUNCE_PLEASE and immediately return the ANNOUNCE_INIT response.
-Without ANNOUNCE_INIT, the API server would have use a timer to wait until ANNOUNCE to guess when all ANNOUNCE messages have been recieved.
+Without ANNOUNCE_INIT, the API server would have use a timer to wait until ANNOUNCE to guess when all ANNOUNCE messages have been received.
 
 ~~~
 ANNOUNCE_INIT Message {
@@ -344,19 +345,20 @@ ANNOUNCE_INIT Message {
 **Suffix Count**:
 The number of active broadcast path suffixes that follow.
 This can be 0.
+A publisher SHOULD NOT include duplicate suffixes in a single ANNOUNCE_INIT message.
 
 **Broadcast Path Suffix**:
 Each suffix is combined with the broadcast path prefix from ANNOUNCE_PLEASE to form the full broadcast path.
-This all currently active broadcasts matching the prefix.
+This includes all currently active broadcasts matching the prefix.
 
 
 
 ## ANNOUNCE
 A publisher sends an ANNOUNCE message to advertise a change in broadcast availability.
-Only the suffix is encoded on the wire, as the full path can constructed by prepending the requested prefix.
+Only the suffix is encoded on the wire, as the full path can be constructed by prepending the requested prefix.
 
 The status is relative to the ANNOUNCE_INIT and all prior ANNOUNCE messages combined.
-A client MUST ONLY toggle the status, encoded on the wire so the receiver doesn't need to maintain a set of active broadcasts.
+A client MUST ONLY alternate between status values (from active to ended or vice versa), encoded on the wire so the receiver doesn't need to maintain a set of active broadcasts.
 
 ~~~
 ANNOUNCE Message {
