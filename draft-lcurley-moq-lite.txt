@@ -3,9 +3,9 @@
 
 
 moq                                                            L. Curley
-Internet-Draft                                              21 July 2025
+Internet-Draft                                              22 July 2025
 Intended status: Informational                                          
-Expires: 22 January 2026
+Expires: 23 January 2026
 
 
                          Media over QUIC - Lite
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 22 January 2026.
+   This Internet-Draft will expire on 23 January 2026.
 
 Copyright Notice
 
@@ -85,18 +85,19 @@ Table of Contents
      5.3.  Unidirectional Streams
        5.3.1.  Group
    6.  Encoding
-     6.1.  STREAM_TYPE
-     6.2.  SESSION_CLIENT
-     6.3.  SESSION_SERVER
-     6.4.  SESSION_UPDATE
-     6.5.  ANNOUNCE_PLEASE
-     6.6.  ANNOUNCE_INIT
-     6.7.  ANNOUNCE
-     6.8.  SUBSCRIBE
-     6.9.  SUBSCRIBE_UPDATE
-     6.10. SUBSCRIBE_OK
-     6.11. GROUP
-     6.12. FRAME
+     6.1.  Message Length
+     6.2.  STREAM_TYPE
+     6.3.  SESSION_CLIENT
+     6.4.  SESSION_SERVER
+     6.5.  SESSION_UPDATE
+     6.6.  ANNOUNCE_PLEASE
+     6.7.  ANNOUNCE_INIT
+     6.8.  ANNOUNCE
+     6.9.  SUBSCRIBE
+     6.10. SUBSCRIBE_UPDATE
+     6.11. SUBSCRIBE_OK
+     6.12. GROUP
+     6.13. FRAME
    7.  Appendix A: Changelog
      7.1.  moq-lite-01
    8.  Appendix B: Upstream Differences
@@ -190,7 +191,7 @@ Table of Contents
 3.2.  Broadcast
 
    A Broadcast is a collection of Tracks from a single publisher.  This
-   cooresponds to a MoqTransport "track namespace".
+   corresponds to a MoqTransport "track namespace".
 
    A publisher may produce multiple broadcasts.  The available
    broadcasts are advertised via an ANNOUNCE message and a subscriber
@@ -410,7 +411,18 @@ Table of Contents
 
    This section covers the encoding of each message.
 
-6.1.  STREAM_TYPE
+6.1.  Message Length
+
+   Most messages are prefixed with a variable-length integer indicating
+   the number of bytes in the message payload that follows.  This length
+   field does not include the length of the varint length itself.
+
+   An implementation SHOULD close the connection with a
+   PROTOCOL_VIOLATION if it receives a message with an unexpected
+   length.  The version and extensions should be used to support new
+   fields, not the message length.
+
+6.2.  STREAM_TYPE
 
    All streams start with a short header indicating the stream type.
 
@@ -419,14 +431,15 @@ Table of Contents
    }
 
    The stream ID depends on if it's a bidirectional or unidirectional
-   stream, as indicated in the Streams section.  A reciever MUST close
+   stream, as indicated in the Streams section.  A receiver MUST close
    the session if it receives an unknown stream type.
 
-6.2.  SESSION_CLIENT
+6.3.  SESSION_CLIENT
 
    The client initiates the session by sending a SESSION_CLIENT message.
 
    SESSION_CLIENT Message {
+     Message Length (i)
      Supported Versions Count (i)
      Supported Version (i)
      Extension Count (i)
@@ -436,11 +449,12 @@ Table of Contents
      ]...
    }
 
-6.3.  SESSION_SERVER
+6.4.  SESSION_SERVER
 
    The server responds with the selected version and any extensions.
 
    SESSION_SERVER Message {
+     Message Length (i)
      Selected Version (i)
      Extension Count (i)
      [
@@ -449,9 +463,10 @@ Table of Contents
      ]...
    }
 
-6.4.  SESSION_UPDATE
+6.5.  SESSION_UPDATE
 
    SESSION_UPDATE Message {
+     Message Length (i)
      Session Bitrate (i)
    }
 
@@ -460,13 +475,14 @@ Table of Contents
    congestion controller.  A value of 0 indicates that this information
    is not available.
 
-6.5.  ANNOUNCE_PLEASE
+6.6.  ANNOUNCE_PLEASE
 
    A subscriber sends an ANNOUNCE_PLEASE message to indicate it wants to
    receive an ANNOUNCE message for any broadcasts with a path that
    starts with the requested prefix.
 
    ANNOUNCE_PLEASE Message {
+     Message Length (i)
      Broadcast Path Prefix (s),
    }
 
@@ -478,7 +494,7 @@ Table of Contents
    any updates.  Implementations SHOULD consider reasonable limits on
    the number of matching broadcasts to prevent resource exhaustion.
 
-6.6.  ANNOUNCE_INIT
+6.7.  ANNOUNCE_INIT
 
    A publisher sends an ANNOUNCE_INIT message immediately after
    receiving an ANNOUNCE_PLEASE to communicate all currently active
@@ -495,6 +511,7 @@ Table of Contents
    received.
 
    ANNOUNCE_INIT Message {
+     Message Length (i)
      Suffix Count (i),
      [
        Broadcast Path Suffix (s),
@@ -509,7 +526,7 @@ Table of Contents
    path prefix from ANNOUNCE_PLEASE to form the full broadcast path.
    This includes all currently active broadcasts matching the prefix.
 
-6.7.  ANNOUNCE
+6.8.  ANNOUNCE
 
    A publisher sends an ANNOUNCE message to advertise a change in
    broadcast availability.  Only the suffix is encoded on the wire, as
@@ -520,6 +537,7 @@ Table of Contents
    values (from active to ended or vice versa).
 
    ANNOUNCE Message {
+     Message Length (i)
      Announce Status (i),
      Broadcast Path Suffix (s),
    }
@@ -533,18 +551,19 @@ Table of Contents
    *Broadcast Path Suffix*: This is combined with the broadcast path
    prefix to form the full broadcast path.
 
-6.8.  SUBSCRIBE
+6.9.  SUBSCRIBE
 
    SUBSCRIBE is sent by a subscriber to start a subscription.
 
    SUBSCRIBE Message {
+     Message Length (i)
      Subscribe ID (i)
      Broadcast Path (s)
      Track Name (s)
      Subscriber Priority (i)
    }
 
-   *Subscribe ID*: A unique idenfier chosen by the subscriber.  A
+   *Subscribe ID*: A unique identifier chosen by the subscriber.  A
    Subscribe ID MUST NOT be reused within the same session, even if the
    prior subscription has been closed.
 
@@ -554,23 +573,25 @@ Table of Contents
    If there is a tie, a publisher MAY use the Publisher Priority as a
    tiebreaker.
 
-6.9.  SUBSCRIBE_UPDATE
+6.10.  SUBSCRIBE_UPDATE
 
    A subscriber can modify a subscription with a SUBSCRIBE_UPDATE
    message.
 
    SUBSCRIBE_UPDATE Message {
+     Message Length (i)
      Subscriber Priority (i)
    }
 
    *Subscriber Priority*: The new subscriber priority; see SUBSCRIBE.
 
-6.10.  SUBSCRIBE_OK
+6.11.  SUBSCRIBE_OK
 
    The SUBSCRIBE_OK is sent in response to a SUBSCRIBE.  It contains
    information about the subscription
 
    SUBSCRIBE_OK Message {
+     Message Length (i)
      Publisher Priority (i)
    }
 
@@ -581,12 +602,13 @@ Table of Contents
    *Meta*: This field isn't super useful and could have been removed,
    but we should encode _something_ to acknowledge the subscription.
 
-6.11.  GROUP
+6.12.  GROUP
 
    The GROUP message contains information about a Group, as well as a
    reference to the subscription being served.
 
    GROUP Message {
+     Message Length (i)
      Subscribe ID (i)
      Group Sequence (i)
    }
@@ -597,11 +619,12 @@ Table of Contents
    *Group Sequence*: The sequence number of the group.  This SHOULD
    increase by 1 for each new group.
 
-6.12.  FRAME
+6.13.  FRAME
 
    The FRAME message is a payload at a specific point of time.
 
    FRAME Message {
+     Message Length (i)
      Payload (b)
    }
 
@@ -614,6 +637,8 @@ Table of Contents
 7.1.  moq-lite-01
 
    *  Added ANNOUNCE_INIT.
+
+   *  Added Message Length (i) to all messages.
 
 8.  Appendix B: Upstream Differences
 
@@ -701,7 +726,7 @@ Table of Contents
 
 8.3.  Misc Changes
 
-   *  Messages don't have an encoded length.
+   *  Messages include a varint length prefix.
 
    *  Track Namespace (renamed to Broadcast Path) is a string, not an
       array of bytes.
