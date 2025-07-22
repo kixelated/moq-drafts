@@ -83,7 +83,7 @@ A moq-lite session is hop-by-hop, but the application should be designed end-to-
 
 ## Broadcast
 A Broadcast is a collection of Tracks from a single publisher.
-This cooresponds to a MoqTransport "track namespace".
+This corresponds to a MoqTransport "track namespace".
 
 A publisher may produce multiple broadcasts.
 The available broadcasts are advertised via an ANNOUNCE message and a subscriber can discover available broadcasts via an ANNOUNCE_PLEASE message.
@@ -252,6 +252,13 @@ Both the publisher and subscriber MAY reset the stream at any time.
 # Encoding
 This section covers the encoding of each message.
 
+## Message Length
+Most messages are prefixed with a variable-length integer indicating the number of bytes in the message payload that follows.
+This length field does not include the length of the varint length itself.
+
+An implementation SHOULD close the connection with a PROTOCOL_VIOLATION if it receives a message with an unexpected length.
+The version and extensions should be used to support new fields, not the message length.
+
 ## STREAM_TYPE
 All streams start with a short header indicating the stream type.
 
@@ -262,13 +269,15 @@ STREAM_TYPE {
 ~~~
 
 The stream ID depends on if it's a bidirectional or unidirectional stream, as indicated in the Streams section.
-A reciever MUST close the session if it receives an unknown stream type.
+A receiver MUST close the session if it receives an unknown stream type.
+
 
 ## SESSION_CLIENT
 The client initiates the session by sending a SESSION_CLIENT message.
 
 ~~~
 SESSION_CLIENT Message {
+  Message Length (i)
   Supported Versions Count (i)
   Supported Version (i)
   Extension Count (i)
@@ -285,6 +294,7 @@ The server responds with the selected version and any extensions.
 
 ~~~
 SESSION_SERVER Message {
+  Message Length (i)
   Selected Version (i)
   Extension Count (i)
   [
@@ -298,6 +308,7 @@ SESSION_SERVER Message {
 
 ~~~
 SESSION_UPDATE Message {
+  Message Length (i)
   Session Bitrate (i)
 }
 ~~~
@@ -313,6 +324,7 @@ A subscriber sends an ANNOUNCE_PLEASE message to indicate it wants to receive an
 
 ~~~
 ANNOUNCE_PLEASE Message {
+  Message Length (i)
   Broadcast Path Prefix (s),
 }
 ~~~
@@ -335,6 +347,7 @@ Without ANNOUNCE_INIT, the API server would have use a timer to wait until ANNOU
 
 ~~~
 ANNOUNCE_INIT Message {
+  Message Length (i)
   Suffix Count (i),
   [
     Broadcast Path Suffix (s),
@@ -362,6 +375,7 @@ A client MUST ONLY alternate between status values (from active to ended or vice
 
 ~~~
 ANNOUNCE Message {
+  Message Length (i)
   Announce Status (i),
   Broadcast Path Suffix (s),
 }
@@ -382,6 +396,7 @@ SUBSCRIBE is sent by a subscriber to start a subscription.
 
 ~~~
 SUBSCRIBE Message {
+  Message Length (i)
   Subscribe ID (i)
   Broadcast Path (s)
   Track Name (s)
@@ -390,7 +405,7 @@ SUBSCRIBE Message {
 ~~~
 
 **Subscribe ID**:
-A unique idenfier chosen by the subscriber.
+A unique identifier chosen by the subscriber.
 A Subscribe ID MUST NOT be reused within the same session, even if the prior subscription has been closed.
 
 **Subscriber Priority**:
@@ -404,6 +419,7 @@ A subscriber can modify a subscription with a SUBSCRIBE_UPDATE message.
 
 ~~~
 SUBSCRIBE_UPDATE Message {
+  Message Length (i)
   Subscriber Priority (i)
 }
 ~~~
@@ -418,6 +434,7 @@ It contains information about the subscription
 
 ~~~
 SUBSCRIBE_OK Message {
+  Message Length (i)
   Publisher Priority (i)
 }
 ~~~
@@ -433,6 +450,7 @@ The GROUP message contains information about a Group, as well as a reference to 
 
 ~~~
 GROUP Message {
+  Message Length (i)
   Subscribe ID (i)
   Group Sequence (i)
 }
@@ -452,6 +470,7 @@ The FRAME message is a payload at a specific point of time.
 
 ~~~
 FRAME Message {
+  Message Length (i)
   Payload (b)
 }
 ~~~
@@ -465,7 +484,7 @@ A generic library or relay MUST NOT inspect or modify the contents unless otherw
 
 ## moq-lite-01
 - Added ANNOUNCE_INIT.
-
+- Added Message Length (i) to all messages.
 
 # Appendix B: Upstream Differences
 A quick comparison of moq-lite and moq-transport-10:
@@ -514,7 +533,7 @@ Some of these fields occur in multiple messages.
 - Extension Headers
 
 ## Misc Changes
-- Messages don't have an encoded length.
+- Messages include a varint length prefix.
 - Track Namespace (renamed to Broadcast Path) is a string, not an array of bytes.
 - Track Name is a string, not bytes.
 
