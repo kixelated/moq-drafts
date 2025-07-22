@@ -1375,7 +1375,7 @@ A moq-lite session is hop-by-hop, but the application should be designed end-to-
 <a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-broadcast" class="section-name selfRef">Broadcast</a>
         </h3>
 <p id="section-3.2-1">A Broadcast is a collection of Tracks from a single publisher.
-This cooresponds to a MoqTransport "track namespace".<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+This corresponds to a MoqTransport "track namespace".<a href="#section-3.2-1" class="pilcrow">¶</a></p>
 <p id="section-3.2-2">A publisher may produce multiple broadcasts.
 The available broadcasts are advertised via an ANNOUNCE message and a subscriber can discover available broadcasts via an ANNOUNCE_PLEASE message.
 These announcements are live and can change over time, allowing for dynamic origin discovery.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
@@ -1645,7 +1645,7 @@ STREAM_TYPE {
 </pre><a href="#section-6.2-2" class="pilcrow">¶</a>
 </div>
 <p id="section-6.2-3">The stream ID depends on if it's a bidirectional or unidirectional stream, as indicated in the Streams section.
-A reciever <span class="bcp14">MUST</span> close the session if it receives an unknown stream type.<a href="#section-6.2-3" class="pilcrow">¶</a></p>
+A receiver <span class="bcp14">MUST</span> close the session if it receives an unknown stream type.<a href="#section-6.2-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sessionclient">
@@ -1810,7 +1810,7 @@ SUBSCRIBE Message {
 </pre><a href="#section-6.9-2" class="pilcrow">¶</a>
 </div>
 <p id="section-6.9-3"><strong>Subscribe ID</strong>:
-A unique idenfier chosen by the subscriber.
+A unique identifier chosen by the subscriber.
 A Subscribe ID <span class="bcp14">MUST NOT</span> be reused within the same session, even if the prior subscription has been closed.<a href="#section-6.9-3" class="pilcrow">¶</a></p>
 <p id="section-6.9-4"><strong>Subscriber Priority</strong>:
 The transmission priority of the subscription relative to all other active subscriptions within the session.

@@ -191,7 +191,7 @@ Table of Contents
 3.2.  Broadcast
 
    A Broadcast is a collection of Tracks from a single publisher.  This
-   cooresponds to a MoqTransport "track namespace".
+   corresponds to a MoqTransport "track namespace".
 
    A publisher may produce multiple broadcasts.  The available
    broadcasts are advertised via an ANNOUNCE message and a subscriber
@@ -431,7 +431,7 @@ Table of Contents
    }
 
    The stream ID depends on if it's a bidirectional or unidirectional
-   stream, as indicated in the Streams section.  A reciever MUST close
+   stream, as indicated in the Streams section.  A receiver MUST close
    the session if it receives an unknown stream type.
 
 6.3.  SESSION_CLIENT
@@ -563,7 +563,7 @@ Table of Contents
      Subscriber Priority (i)
    }
 
-   *Subscribe ID*: A unique idenfier chosen by the subscriber.  A
+   *Subscribe ID*: A unique identifier chosen by the subscriber.  A
    Subscribe ID MUST NOT be reused within the same session, even if the
    prior subscription has been closed.
 
