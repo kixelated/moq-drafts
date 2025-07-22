@@ -83,7 +83,7 @@ A moq-lite session is hop-by-hop, but the application should be designed end-to-
 
 ## Broadcast
 A Broadcast is a collection of Tracks from a single publisher.
-This cooresponds to a MoqTransport "track namespace".
+This corresponds to a MoqTransport "track namespace".
 
 A publisher may produce multiple broadcasts.
 The available broadcasts are advertised via an ANNOUNCE message and a subscriber can discover available broadcasts via an ANNOUNCE_PLEASE message.
@@ -269,7 +269,7 @@ STREAM_TYPE {
 ~~~
 
 The stream ID depends on if it's a bidirectional or unidirectional stream, as indicated in the Streams section.
-A reciever MUST close the session if it receives an unknown stream type.
+A receiver MUST close the session if it receives an unknown stream type.
 
 
 ## SESSION_CLIENT
@@ -405,7 +405,7 @@ SUBSCRIBE Message {
 ~~~
 
 **Subscribe ID**:
-A unique idenfier chosen by the subscriber.
+A unique identifier chosen by the subscriber.
 A Subscribe ID MUST NOT be reused within the same session, even if the prior subscription has been closed.
 
 **Subscriber Priority**:
