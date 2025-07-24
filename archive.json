@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-07-22T00:10:42.265912+00:00",
+  "timestamp": "2025-07-24T00:10:23.599666+00:00",
   "repo": "kixelated/moq-drafts",
   "labels": [
     {
@@ -371,6 +371,56 @@
           "body": "**Claude finished @kixelated's task** \u2014\u2014 [View job](https://github.com/kixelated/moq-drafts/actions/runs/16427117339)\n\n---\n### \u2705 Task Completed: Specific Text Revisions to ANNOUNCE_INIT Specification\n\n- [x] Read the current draft-lcurley-moq-lite.md file to locate target text\n- [x] Change \"A publisher SHOULD NOT include duplicate suffixes\" to \"MUST NOT\" (line 348)\n- [x] Fix run-on sentence about status alternation (line 361) - removed justification clause\n- [x] Commit and push changes to announce-init branch\n\n---\n\n### Changes Made\n\n**1. Strengthened duplicate suffix requirement:**\n- Changed `A publisher SHOULD NOT include duplicate suffixes` \u2192 `A publisher MUST NOT include duplicate suffixes`\n\n**2. Simplified status alternation sentence:**\n- Original: `A client MUST ONLY alternate between status values (from active to ended or vice versa), encoded on the wire so the receiver doesn't need to maintain a set of active broadcasts.`\n- Revised: `A client MUST ONLY alternate between status values (from active to ended or vice versa).`\n- Removed the design justification clause as requested\n\n**Commit:** [`94c958c`](https://github.com/kixelated/moq-drafts/commit/94c958c) - \"Strengthen ANNOUNCE_INIT duplicate suffix requirement and simplify status alternation sentence\"\n\nBoth requested changes have been successfully implemented and pushed to the `announce-init` branch.\n\n---",
           "createdAt": "2025-07-21T20:13:16Z",
           "updatedAt": "2025-07-21T20:14:49Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 11,
+      "id": "PR_kwDOLz_x-M6f-yJ5",
+      "title": "Add a message length to each message.",
+      "url": "https://github.com/kixelated/moq-drafts/pull/11",
+      "state": "MERGED",
+      "author": "kixelated",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "Useful for debugging encoding issues.",
+      "createdAt": "2025-07-22T04:27:12Z",
+      "updatedAt": "2025-07-22T16:32:36Z",
+      "baseRepository": "kixelated/moq-drafts",
+      "baseRefName": "main",
+      "baseRefOid": "2751bb05a32a6b62022b1185bdbef65ca0f195a3",
+      "headRepository": "kixelated/moq-drafts",
+      "headRefName": "message-size",
+      "headRefOid": "d684aabe199d0567f181c4ba380ebb3229191885",
+      "closedAt": "2025-07-22T16:32:36Z",
+      "mergedAt": "2025-07-22T16:32:35Z",
+      "mergedBy": "kixelated",
+      "mergeCommit": {
+        "oid": "eb32d1043eab2eb6017b1eb856198788ed084202"
+      },
+      "comments": [
+        {
+          "author": "claude",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "**Claude finished @kixelated's task** \u2014\u2014 [View job](https://github.com/kixelated/moq-drafts/actions/runs/16434655437)\n\n---\n### PR Review Complete \u2705\n\n**Add a message length to each message**\n\n#### Todo List:\n- [x] Read and analyze changes in draft-lcurley-moq-lite.md\n- [x] Review for code quality and best practices\n- [x] Check for potential bugs or issues\n- [x] Assess performance considerations\n- [x] Evaluate security concerns\n- [x] Consider test coverage implications\n- [x] Provide comprehensive review feedback\n\n---\n\n### Review Summary\n\nThis PR adds message length prefixes to all MOQ-Lite protocol messages, which is a **solid improvement** for protocol robustness and debugging capabilities.\n\n### \u2705 Strengths\n\n**Protocol Design Quality:**\n- **Consistent implementation**: The `Message Length (i)` field is systematically added to all 11 message types\n- **Clear specification**: Well-documented in lines 255-261 with explicit guidance on length field semantics\n- **Proper error handling**: Specifies that implementations SHOULD close with `PROTOCOL_VIOLATION` for unexpected lengths\n\n**Best Practices:**\n- **Length excludes itself**: Correctly specifies that the length field doesn't include its own varint bytes\n- **Version negotiation preference**: Recommends using version/extensions rather than length for new fields\n- **Changelog maintenance**: Properly documented in Appendix A\n\n### \ud83d\udd0d Technical Considerations\n\n**Performance Impact:**\n- **Minimal overhead**: Variable-length integers are efficient for small messages\n- **Parsing benefit**: Enables implementations to pre-allocate buffers and validate message boundaries\n- **Network efficiency**: No significant bandwidth impact given varint encoding\n\n**Security Enhancements:**\n- **DoS protection**: Message length validation helps prevent resource exhaustion attacks\n- **Parser robustness**: Enables early detection of malformed messages before full parsing\n- **Protocol violation detection**: Clear error semantics for implementation bugs\n\n**Implementation Considerations:**\n- **Backward compatibility**: This appears to be a breaking change requiring version bump\n- **Stream framing**: Works well with QUIC's stream-based delivery model\n- **Debugging improvement**: Aligns with PR description goal of helping debug encoding issues\n\n### \ud83d\udcdd Minor Observations\n\n**Documentation:**\n- Line 272: \"reciever\" should be \"receiver\" (pre-existing typo)\n- The specification format follows IETF RFC style consistently\n\n**Protocol Specification:**\n- All message formats are updated consistently\n- Appendix B properly reflects the change from \"Messages don't have an encoded length\" to \"Messages include a varint length prefix\"\n\n### \u2705 Recommendation\n\n**APPROVE** - This is a well-executed protocol enhancement that improves robustness, debugging capabilities, and implementation reliability with minimal overhead.\n\n---",
+          "createdAt": "2025-07-22T04:27:26Z",
+          "updatedAt": "2025-07-22T04:28:43Z"
+        },
+        {
+          "author": "kixelated",
+          "authorAssociation": "OWNER",
+          "body": "@claude can you fix any typos? And fix the appendix.",
+          "createdAt": "2025-07-22T11:20:48Z",
+          "updatedAt": "2025-07-22T11:20:48Z"
+        },
+        {
+          "author": "claude",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "**Claude finished @kixelated's task** \u2014\u2014 [View job](https://github.com/kixelated/moq-drafts/actions/runs/16442799513)\n\n---\n### Typos and Appendix Review Complete \u2705\n\n### Todo List:\n- [x] Read the draft document to understand current state\n- [x] Fix typo: 'reciever' -> 'receiver' (line 272)\n- [x] Fix typo: 'cooresponds' -> 'corresponds' (line 86)\n- [x] Fix typo: 'idenfier' -> 'identifier' (line 408)\n- [x] Review appendix for accuracy\n- [x] Commit and push changes\n\n---\n\n### Summary\n\n**Typos Fixed:**\n- Line 86: `cooresponds` \u2192 `corresponds` \n- Line 272: `reciever` \u2192 `receiver`\n- Line 408: `idenfier` \u2192 `identifier`\n\n**Appendix Review:**\nThe appendix is already accurate and properly reflects the message length changes:\n- Appendix A correctly documents \"Added Message Length (i) to all messages\"\n- Appendix B correctly lists \"Messages include a varint length prefix\" in the upstream differences\n\n**Changes committed and pushed** to the `message-size` branch successfully.\n\n---\n | [Branch: message-size](https://github.com/kixelated/moq-drafts/tree/message-size)",
+          "createdAt": "2025-07-22T11:21:02Z",
+          "updatedAt": "2025-07-22T11:22:32Z"
         }
       ],
       "reviews": []
