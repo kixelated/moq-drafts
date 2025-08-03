@@ -570,8 +570,6 @@ Table of Contents
    *Subscriber Priority*: The transmission priority of the subscription
    relative to all other active subscriptions within the session.  The
    publisher SHOULD transmit _higher_ values first during congestion.
-   If there is a tie, a publisher may choose which subscription takes
-   priority, if any.
 
 6.10.  SUBSCRIBE_UPDATE
 
