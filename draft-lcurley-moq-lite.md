@@ -411,7 +411,6 @@ A Subscribe ID MUST NOT be reused within the same session, even if the prior sub
 **Subscriber Priority**:
 The transmission priority of the subscription relative to all other active subscriptions within the session.
 The publisher SHOULD transmit *higher* values first during congestion.
-If there is a tie, a publisher may choose which subscription takes priority, if any.
 
 
 ## SUBSCRIBE_UPDATE
