@@ -411,7 +411,6 @@ A Subscribe ID MUST NOT be reused within the same session, even if the prior sub
 **Subscriber Priority**:
 The transmission priority of the subscription relative to all other active subscriptions within the session.
 The publisher SHOULD transmit *higher* values first during congestion.
-If there is a tie, a publisher MAY use the Publisher Priority as a tiebreaker.
 
 
 ## SUBSCRIBE_UPDATE
@@ -430,20 +429,14 @@ The new subscriber priority; see SUBSCRIBE.
 
 ## SUBSCRIBE_OK
 The SUBSCRIBE_OK is sent in response to a SUBSCRIBE.
-It contains information about the subscription
 
 ~~~
 SUBSCRIBE_OK Message {
-  Message Length (i)
-  Publisher Priority (i)
+  Message Length = 0
 }
 ~~~
 
-**Publisher Priority**:
-The priority of the subscription as indicated by the publisher.
-This SHOULD be used as a tiebreaker when the Subscriber Priority is the same.
-
-**Meta**: This field isn't super useful and could have been removed, but we should encode *something* to acknowledge the subscription.
+That's right, it's an empty message at the moment.
 
 ## GROUP
 The GROUP message contains information about a Group, as well as a reference to the subscription being served.
