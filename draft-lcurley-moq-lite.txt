@@ -3,9 +3,9 @@
 
 
 moq                                                            L. Curley
-Internet-Draft                                              22 July 2025
+Internet-Draft                                             3 August 2025
 Intended status: Informational                                          
-Expires: 23 January 2026
+Expires: 4 February 2026
 
 
                          Media over QUIC - Lite
@@ -47,7 +47,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 23 January 2026.
+   This Internet-Draft will expire on 4 February 2026.
 
 Copyright Notice
 
@@ -570,8 +570,6 @@ Table of Contents
    *Subscriber Priority*: The transmission priority of the subscription
    relative to all other active subscriptions within the session.  The
    publisher SHOULD transmit _higher_ values first during congestion.
-   If there is a tie, a publisher MAY use the Publisher Priority as a
-   tiebreaker.
 
 6.10.  SUBSCRIBE_UPDATE
 
@@ -587,20 +585,13 @@ Table of Contents
 
 6.11.  SUBSCRIBE_OK
 
-   The SUBSCRIBE_OK is sent in response to a SUBSCRIBE.  It contains
-   information about the subscription
+   The SUBSCRIBE_OK is sent in response to a SUBSCRIBE.
 
    SUBSCRIBE_OK Message {
-     Message Length (i)
-     Publisher Priority (i)
+     Message Length = 0
    }
 
-   *Publisher Priority*: The priority of the subscription as indicated
-   by the publisher.  This SHOULD be used as a tiebreaker when the
-   Subscriber Priority is the same.
-
-   *Meta*: This field isn't super useful and could have been removed,
-   but we should encode _something_ to acknowledge the subscription.
+   That's right, it's an empty message at the moment.
 
 6.12.  GROUP
 
