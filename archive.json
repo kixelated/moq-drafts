@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-08-03T00:11:31.239835+00:00",
+  "timestamp": "2025-08-05T00:10:43.362947+00:00",
   "repo": "kixelated/moq-drafts",
   "labels": [
     {
@@ -421,6 +421,42 @@
           "body": "**Claude finished @kixelated's task** \u2014\u2014 [View job](https://github.com/kixelated/moq-drafts/actions/runs/16442799513)\n\n---\n### Typos and Appendix Review Complete \u2705\n\n### Todo List:\n- [x] Read the draft document to understand current state\n- [x] Fix typo: 'reciever' -> 'receiver' (line 272)\n- [x] Fix typo: 'cooresponds' -> 'corresponds' (line 86)\n- [x] Fix typo: 'idenfier' -> 'identifier' (line 408)\n- [x] Review appendix for accuracy\n- [x] Commit and push changes\n\n---\n\n### Summary\n\n**Typos Fixed:**\n- Line 86: `cooresponds` \u2192 `corresponds` \n- Line 272: `reciever` \u2192 `receiver`\n- Line 408: `idenfier` \u2192 `identifier`\n\n**Appendix Review:**\nThe appendix is already accurate and properly reflects the message length changes:\n- Appendix A correctly documents \"Added Message Length (i) to all messages\"\n- Appendix B correctly lists \"Messages include a varint length prefix\" in the upstream differences\n\n**Changes committed and pushed** to the `message-size` branch successfully.\n\n---\n | [Branch: message-size](https://github.com/kixelated/moq-drafts/tree/message-size)",
           "createdAt": "2025-07-22T11:21:02Z",
           "updatedAt": "2025-07-22T11:22:32Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 12,
+      "id": "PR_kwDOLz_x-M6h58m7",
+      "title": "Remove publisher priority.",
+      "url": "https://github.com/kixelated/moq-drafts/pull/12",
+      "state": "MERGED",
+      "author": "kixelated",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-08-03T21:33:17Z",
+      "updatedAt": "2025-08-03T21:34:36Z",
+      "baseRepository": "kixelated/moq-drafts",
+      "baseRefName": "main",
+      "baseRefOid": "eb32d1043eab2eb6017b1eb856198788ed084202",
+      "headRepository": "kixelated/moq-drafts",
+      "headRefName": "publisher-priority",
+      "headRefOid": "5aed1e9f8f85b0f998152a69059e3562651505e8",
+      "closedAt": "2025-08-03T21:33:39Z",
+      "mergedAt": "2025-08-03T21:33:39Z",
+      "mergedBy": "kixelated",
+      "mergeCommit": {
+        "oid": "7b5e17355e37f9657996f23bc7e7d8da5f64d9a5"
+      },
+      "comments": [
+        {
+          "author": "claude",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "**Claude finished @kixelated's task** \u2014\u2014 [View job](https://github.com/kixelated/moq-drafts/actions/runs/16709657339)\n\n---\n### PR Review: Remove Publisher Priority \u2705\n\nI've completed a comprehensive review of the changes that remove publisher priority functionality from the MOQ lite specification.\n\n#### Review Tasks:\n- [x] Analyze the specific changes made to `draft-lcurley-moq-lite.md`\n- [x] Check for consistency and completeness after the removal\n- [x] Look for any remaining references that might need cleanup\n- [x] Assess technical impact on the protocol specification\n- [x] Provide feedback on code quality, potential issues, and best practices\n\n---\n\n#### Analysis\n\nThe PR removes a single sentence from line 414 in the `SUBSCRIBE` message documentation:\n```diff\n- If there is a tie, a publisher may choose which subscription takes priority, if any.\n```\n\n#### Review Feedback\n\n**\u2705 Positive Aspects:**\n1. **Clean removal**: The change is surgical and well-contained, removing only the tie-breaking behavior without affecting the core priority mechanism\n2. **Maintains consistency**: The removal doesn't create any dangling references or inconsistencies within the MOQ lite specification\n3. **Preserves core functionality**: Subscriber priority still works as intended - publishers should transmit higher priority values first during congestion\n\n**\ud83d\udccb Technical Impact Assessment:**\n\n**Specification Clarity:**\n- **Improvement**: Removing the tie-breaking clause simplifies the priority model by eliminating publisher discretion in ambiguous cases\n- **Consistency**: This aligns with the \"lite\" philosophy of the specification - removing optional complexity\n\n**Protocol Behavior:**\n- **No breaking changes**: The core priority mechanism (`draft-lcurley-moq-lite.md:412-413`) remains intact\n- **Reduced ambiguity**: Publishers no longer have discretionary tie-breaking power, which could lead to non-deterministic behavior\n- **Simplified implementation**: Removes a potentially complex edge case from publisher implementations\n\n**Cross-document Consistency Check:**\n- **\u26a0\ufe0f Potential inconsistency**: `draft-lcurley-moq-use-cases.md:321` still mentions \"A relay should use the publisher's priority/order only when there's a conflict\" - this may need updating to reflect the simplified model where publishers no longer have tie-breaking authority\n\n#### Recommendations\n\n1. **Consider updating use-cases document**: The use-cases document (`draft-lcurley-moq-use-cases.md:321`) still references publisher priority in conflict resolution. Consider updating this to reflect the simplified priority model.\n\n2. **Specification completeness**: With tie-breaking removed, consider explicitly stating what should happen when subscriber priorities are equal (e.g., \"implementation-defined behavior\" or \"round-robin\").\n\n#### Security & Performance Considerations\n\n- **Security**: \u2705 No security implications - this is a protocol behavior simplification\n- **Performance**: \u2705 Slight improvement - removes complexity from publisher priority decision-making\n- **Interoperability**: \u2705 Good - simplifies implementation requirements\n\n#### Test Coverage\n\nSince this is a protocol specification document rather than implementation code, traditional test coverage doesn't apply. However, the change should be reflected in:\n- Implementation test suites that verify priority behavior\n- Conformance tests for tie-breaking scenarios\n\n#### Summary\n\nThis is a well-executed simplification that aligns with the MOQ lite philosophy of removing complexity. The change improves specification clarity while maintaining the core priority functionality. The only concern is potential inconsistency with the use-cases document that should be addressed.\n\n**Recommendation: Approve with suggestion to update cross-references in related documents.**\n\n---",
+          "createdAt": "2025-08-03T21:33:30Z",
+          "updatedAt": "2025-08-03T21:34:36Z"
         }
       ],
       "reviews": []
